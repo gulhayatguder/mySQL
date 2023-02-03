@@ -1,0 +1,133 @@
+/* ====================================== UPDATE ========================================
+Tabloda varolan herhangi bir record'a ait verinin degistirilmesi icin kullanilir.
+-----Syntax-----
+UPDATE table_name
+SET field1=''
+WHERE condition;
+UPDATE islemlerinin yapilabilmesi icin Ayarlar -> SQL Editor -> "Safe Updates" check box'indaki
+tik isaretini kaldirip kaydetmemiz gerekiyor, sonrasinda MySQL'i kapatip tekrar acmaliyiz
+========================================================================================*/
+/*--------------------------------------------------------------------------------------
+1) Bir firmalar tablosu olusturun icinde id,
+isim ve iletisim_isim field'lari olsun.
+Id ve isim'i beraber Primary Key yapin.
+---------------------------------------------------------------------------------------*/
+use sys;
+CREATE TABLE firmalar
+(
+id INT,
+isim VARCHAR(20),
+iletisim_isim VARCHAR(20),
+CONSTRAINT firmalar_pk PRIMARY KEY (id, isim)
+);
+/*--------------------------------------------------------------------------------------
+2) Icine 3 kayit ekleyin :
+(1, 'ACB', 'Ali Can'),
+(2, 'RDB', 'Veli Gul'),
+(3, 'KMN', 'Ayse Gulmez').
+---------------------------------------------------------------------------------------*/
+INSERT INTO firmalar VALUES
+(1, 'ACB', 'Ali Can'),
+(2, 'RDB', 'Veli Gul'),
+(3, 'KMN', 'Ayse Gulmez');
+SELECT * FROM firmalar;
+DROP TABLE firmalar;
+-- Id'si 3 olan firmanin ismini 'KRM' olarak guncelleyiniz.
+UPDATE firmalar
+SET isim = 'KRM'
+WHERE id=3;
+-- Iletisim ismi Veli Gul olan firmanin id'sini 4, ismini FDS olarak guncelleyiniz.
+-- ++++++++++++++ 1. Yol ++++++++++++++
+UPDATE firmalar
+SET id=4
+WHERE iletisim_isim='Veli Gul';
+UPDATE firmalar
+SET isim='FDS'
+WHERE iletisim_isim='Veli Gul';
+-- ++++++++++++++ 2. Yol ++++++++++++++
+update firmalar
+set id=4,isim='FDS'
+where iletisim_isim='Veli Gul';
+-- Ismi ACB olan firmanin iletisim ismini 'Osman Can' olarak guncelleyiniz.
+UPDATE firmalar
+SET  iletisim_isim='Osman Can'
+WHERE isim='ABC';
+-- Iletisim ismi 'Osman Can' olan firmanin iletisim ismini 'Ayse Can' olarak guncelleyiniz.
+UPDATE firmalar
+SET iletisim_isim = 'Ayse Can'
+WHERE iletisim_isim='Osman Can';
+
+-- ******************************sorular**************************
+-- ************************ Personel Tablosundan *******************************
+/*-------------------------------------------------------------------------
+Q1: Isminin 2. harfi e olup diger harflerinde y olan personeli listeleyiniz
+---------------------------------------------------------------------------*/
+select * from personel
+where isim like '_e%'and isim like '%y%';
+
+/*-------------------------------------------------------------------------
+Q2: Isminde a harfi olmayan personeli listeleyiniz
+---------------------------------------------------------------------------*/
+select * from personel
+where isim  not like ' %a%';
+
+/*-------------------------------------------------------------------------
+Q3: Maasi 5 haneli olan personeli listeleyiniz
+---------------------------------------------------------------------------*/
+select * from personel
+where maas like '_____';
+/*-------------------------------------------------------------------------
+Q4: 1. harfi a ve 7. harfi a olan personeli listeleyiniz
+---------------------------------------------------------------------------*/
+select * from personel
+where isim   like 'a_____a%';
+-- ************************ Fen Lisesi Tablosundan *****************************
+CREATE TABLE lise (
+okul_no CHAR(4) UNIQUE,
+isim VARCHAR(50) NOT NULL,
+derece DOUBLE,
+adres VARCHAR(100),
+son_degisiklik_tarihi DATE
+);
+
+SELECT * FROM lise;
+drop  table lise;
+INSERT INTO lise VALUES ('1001','Fatih Polat',89,'Ankara','2022-12-05');
+INSERT INTO lise VALUES ('1002','Efe Torun',85,'Istanbul','2022-12-05');
+INSERT INTO lise VALUES ('1003','Esra Turker',95,'Izmir','2022-12-05');
+INSERT INTO lise VALUES ('1004','Mustafa Yilmaz',90,'Istanbul','2022-12-05');
+INSERT INTO lise VALUES ('1005','Elif Kesen',92,'Berlin','2022-12-05');
+INSERT INTO lise VALUES ('1006','Tugay Kala',75,null,'2022-12-05');
+INSERT INTO lise VALUES ('1007','Semra Ulusoy',null,null,null);
+INSERT INTO lise VALUES ('1008',null,89,'Ankara','2022-12-05');
+INSERT INTO lise (okul_no,isim,derece,son_degisiklik_tarihi) VALUES ('1009','Mehmet Cil',89,'2022-12-05');
+INSERT INTO lise (isim,derece,son_degisiklik_tarihi) VALUES ('Salim Oz',89,'2022-12-05');
+INSERT INTO lise (isim,derece,son_degisiklik_tarihi) VALUES ('Suleyman Karaca',45,'2022-12-05');
+INSERT INTO lise VALUES ('','Ozgur Ali',90,'Istanbul','2022-12-05');
+INSERT INTO lise VALUES ('','Yusuf Enes',92,'Berlin','2022-12-05');
+-- Q1 : Okul_no ' su 1005'ten buyuk olan ogrencilerin tum bilgilerini listeleyin.
+
+ SELECT *
+ FROM lise
+ where okul_no>1005;
+
+-- Q2 : Ismi Elif Kesen olan ogrencinin derecesini listeleyin.
+ SELECT derece
+ FROM lise
+ where isim='Elif Kesen';
+
+-- Q3 : Derecesi 90dan buyuk olan ogrencilerin okul_no ve isimlerini listeleyin.
+ SELECT okul_no, isim
+ FROM lise
+ where derece>90;
+
+-- Q4 : Ismi Tugay Kala olan ogrencinin derecesini listeleyin :)
+SELECT derece
+ FROM lise
+ where isim='Tugay Kala';
+
+-- Q5 : Istanbulda yasayan ogrencilerin isimlerini listeleyin.
+
+SELECT isim
+ FROM lise
+ where adres='Istanbul';
